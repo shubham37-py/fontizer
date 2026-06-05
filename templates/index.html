@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fontizer - Live Engine</title>
+    <style>
+        body { 
+            font-family: sans-serif; background: #121212; color: white; 
+            padding: 50px; text-align: center; 
+        }
+        #paper { 
+            background: white; width: 80%; height: 400px; margin: 20px auto; 
+            padding: 20px; text-align: left; overflow: hidden; border-radius: 8px; 
+            display: flex; flex-wrap: wrap; align-content: flex-start;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .char { 
+            width: 40px; height: 50px; display: inline-block; 
+            background-size: contain; background-repeat: no-repeat; 
+            background-position: bottom; margin-right: 2px;
+        }
+        .space { width: 20px; height: 50px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h1>Fontizer Typography Engine 🖋️</h1>
+    <p>Start typing on your keyboard. The engine will render your math paths in real-time.</p>
+    
+    <div id="backend-data" data-fonts='{{ font_map | tojson }}' style="display: none;"></div>
+    
+    <div id="paper"></div>
+
+    <script>
+        // 1. Read the hidden data using pure, standard JavaScript
+        const rawData = document.getElementById('backend-data').dataset.fonts;
+        
+        // 2. Parse it into a native JavaScript object
+        const fontMap = JSON.parse(rawData);
+
+        const paper = document.getElementById('paper');
+
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            if (key === 'Backspace') {
+                if (paper.lastChild) paper.removeChild(paper.lastChild);
+                return;
+            }
+            
+            if (key === ' ') {
+                const space = document.createElement('div');
+                space.className = 'space';
+                paper.appendChild(space);
+                return;
+            }
+
+            if (fontMap[key]) {
+                const charDiv = document.createElement('div');
+                charDiv.className = 'char';
+                charDiv.style.backgroundImage = `url(${fontMap[key]})`;
+                paper.appendChild(charDiv);
+            }
+        });
+    </script>
+</body>
+</html>
